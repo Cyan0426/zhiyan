@@ -2444,21 +2444,15 @@ function initSpeechRecognition() {
     return null;
 }
 
-window.openCallOverlay = function() {
-    // 🌟 核心修复：打电话前，强制关掉其他所有界面，防止重叠
-    if (typeof closeMedical === 'function') closeMedical();
-    if (typeof closeAppCenter === 'function') closeAppCenter();
-    if (typeof closeMemoDrawer === 'function') closeMemoDrawer();
-    if (typeof closeArmory === 'function') closeArmory();
-    if (typeof closeCatering === 'function') closeCatering();
-    if (typeof closeCalendar === 'function') closeCalendar();
-    if (typeof closeTradingGame === 'function') closeTradingGame();
-    
-    // 强制关掉医疗系统的密码验证弹窗
-    const medicalAuth = document.getElementById('medicalAuthModal');
-    if (medicalAuth) medicalAuth.classList.remove('active');
 
-    // 打开通话界面
+window.openCallOverlay = function() {
+    // 🌟 核心修复：暴力隐藏所有其他界面，防止在手机端重叠
+    document.querySelectorAll('.medical-drawer, .medical-auth-modal, .app-center-overlay, .memo-drawer, .armory-drawer, .catering-drawer, .calendar-overlay, .trading-overlay, .affection-overlay').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = 'none'; 
+    });
+
+    // 原有的打开通话逻辑
     document.getElementById('callOverlay').classList.add('active');
     document.getElementById('callSubtitle').textContent = '加密信道已建立，请在下方输入指令...';
     document.getElementById('callTimer').textContent = '00:00';
@@ -2480,7 +2474,8 @@ window.openCallOverlay = function() {
         const input = document.getElementById('callTextInput');
         if (input) input.focus();
     }, 300);
-}; // ⚠️ 确保这个函数在这里就结束了，不要多写花括号
+};
+// ⚠️ 确保这个函数在这里就结束了，不要多写花括号
 
 // 🌟 静音按钮改为纯视觉反馈
 window.toggleCallMute = function() {
@@ -4532,15 +4527,21 @@ function completeOrder() {
 /* ================= 13. 医疗系统功能 ================= */
 // 1. 密码验证与抽屉开关
 function openMedical() {    
-    if (typeof hangupCall === 'function') hangupCall(); // 先挂断电话再打开医疗
+    // 强制隐藏通话界面，防止重叠
+    const callOverlay = document.getElementById('callOverlay');
+    if (callOverlay) {
+        callOverlay.classList.remove('active');
+        callOverlay.style.display = 'none';
+    }
+    if (typeof hangupCall === 'function') hangupCall(); // 挂断电话
+    
     const modal = document.getElementById('medicalAuthModal');
     if (modal) {
         modal.classList.add('active');
         const input = document.getElementById('medicalPassInput');
-        if (input) { input.value = ''; input.focus(); } // 清空并聚焦输入框
+        if (input) { input.value = ''; input.focus(); }
     }
 }
-
 function closeMedicalAuth() {
     const modal = document.getElementById('medicalAuthModal');
     if (modal) modal.classList.remove('active');
