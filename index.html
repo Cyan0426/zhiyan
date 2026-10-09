@@ -2446,6 +2446,7 @@ function initSpeechRecognition() {
 
 
 window.openCallOverlay = function() {
+closeAllOverlays();
     // 🌟 核心修复：暴力隐藏所有其他界面，防止在手机端重叠
     document.querySelectorAll('.medical-drawer, .medical-auth-modal, .app-center-overlay, .memo-drawer, .armory-drawer, .catering-drawer, .calendar-overlay, .trading-overlay, .affection-overlay').forEach(el => {
         el.classList.remove('active');
@@ -3362,6 +3363,24 @@ let passBuffer = '';
 const CORRECT_PASS = '0923';
 let pendingDangerousAction = null;
 
+// 🌟 终极修复：一键清空所有可能重叠的界面
+function closeAllOverlays() {
+    const overlays = document.querySelectorAll(
+        '.call-overlay, .briefing-drawer, .bank-overlay, .medical-drawer, ' +
+        '.medical-auth-modal, .app-center-overlay, .memo-drawer, .armory-drawer, ' +
+        '.catering-drawer, .calendar-overlay, .trading-overlay, .affection-overlay, ' +
+        '.chat-overlay, .album-overlay, .shadow-db-overlay, .recruit-overlay, ' +
+        '.blackbox-overlay, .dispatch-overlay, .tactical-overlay, .personnel-modal'
+    );
+    overlays.forEach(el => {
+        el.classList.remove('active');
+        el.style.display = ''; // 恢复默认状态
+    });
+    // 如果当前在通话，强制挂断
+    if (typeof hangupCall === 'function' && isCallActive) hangupCall();
+}
+
+
 // 全局存档函数
 function saveGameState() {
     try {
@@ -3431,6 +3450,15 @@ function loadGameState() {
         console.warn('读取进度失败', e);
     }
 }// ================= 1. 登录流程 =================
+function closeAllOverlays() {
+    document.querySelectorAll('.medical-drawer, .medical-auth-modal, .app-center-overlay, .memo-drawer, .armory-drawer, .catering-drawer, .calendar-overlay, .trading-overlay, .affection-overlay, .call-overlay').forEach(el => {
+        el.classList.remove('active');
+        el.style.display = ''; 
+    });
+    // 如果正在通话，直接挂断
+    if (typeof hangupCall === 'function' && isCallActive) hangupCall();
+}
+
 window.onload = function() {
     localStorage.removeItem('shadowUser');
     document.getElementById('loginScreen').classList.remove('hidden');
@@ -3826,7 +3854,7 @@ const data = await response.json();
     saveGameState();
 }, 1200);   
    }    // ================= 4. 私人银行 =================
-    function openBank() { document.getElementById('bankOverlay').classList.add('active'); }
+    function openBank() { closeAllOverlays();document.getElementById('bankOverlay').classList.add('active'); }
     function closeBank() { document.getElementById('bankOverlay').classList.remove('active'); }
     function submitTransfer() {
         const payee = document.getElementById('payeeName').value.trim();
@@ -4128,7 +4156,7 @@ let memoListData = [
 // ================= 18. 独立空间（控制中心）逻辑 =================
 
 // 打开控制中心
-window.openAppCenter = function() {
+window.openAppCenter = function() {closeAllOverlays();
     const overlay = document.getElementById('appCenterOverlay');
     if (overlay) {
         overlay.style.display = 'flex'; // 👈 强行显示
@@ -4526,7 +4554,8 @@ function completeOrder() {
 
 /* ================= 13. 医疗系统功能 ================= */
 // 1. 密码验证与抽屉开关
-function openMedical() {    
+function openMedical() {    closeAllOverlays();
+
     // 强制隐藏通话界面，防止重叠
     const callOverlay = document.getElementById('callOverlay');
     if (callOverlay) {
@@ -4958,6 +4987,7 @@ const briefingEvents = [
 ];
 
 function openBriefing() {
+closeAllOverlays();
     const drawer = document.getElementById('briefingDrawer');
     const listEl = document.getElementById('briefingList');
     if (!drawer || !listEl) return;
