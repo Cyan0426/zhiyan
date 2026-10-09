@@ -2458,7 +2458,7 @@ window.openCallOverlay = function() {
     const medicalAuth = document.getElementById('medicalAuthModal');
     if (medicalAuth) medicalAuth.classList.remove('active');
 
-    // 原有的打开通话逻辑
+    // 打开通话界面
     document.getElementById('callOverlay').classList.add('active');
     document.getElementById('callSubtitle').textContent = '加密信道已建立，请在下方输入指令...';
     document.getElementById('callTimer').textContent = '00:00';
@@ -2480,7 +2480,8 @@ window.openCallOverlay = function() {
         const input = document.getElementById('callTextInput');
         if (input) input.focus();
     }, 300);
-};
+}; // ⚠️ 确保这个函数在这里就结束了，不要多写花括号
+
 // 🌟 静音按钮改为纯视觉反馈
 window.toggleCallMute = function() {
     isCallMuted = !isCallMuted;
@@ -2513,9 +2514,25 @@ window.sendCallText = function() {
 window.hangupCall = function() {
     isCallActive = false;
     if (callTimerInterval) clearInterval(callTimerInterval);
-    // ... 保留原有的时长记录逻辑 ...
+    
+    // 记录通话时长
+    const mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+    const secs = String(callSeconds % 60).padStart(2, '0');
+    const durationStr = `${mins}:${secs}`;
+    
+    // 插入聊天记录
+    if (typeof chatHistories !== 'undefined' && chatHistories['graves_alt']) {
+        const msg = `📞 通话结束，时长 ${durationStr}`;
+        chatHistories['graves_alt'].push({ sender: 'received', text: msg, time: '刚刚' });
+        if (currentChatId === 'graves_alt') {
+            appendMessageToArea('received', msg, '刚刚');
+        }
+        if (typeof saveGameState === 'function') saveGameState();
+    }
+    
     document.getElementById('callOverlay').classList.remove('active');
 };
+
 window.switchToTextChat = function() {
     hangupCall();
     // 确保聊天界面是打开的
@@ -2523,7 +2540,6 @@ window.switchToTextChat = function() {
         openChat('graves_alt', '未知号码 (Shadow_06)');
     }
 };
-
 // 发送语音识别结果给 API
 async function sendVoiceMessageToGraves(text) {
     document.getElementById('callSubtitle').textContent = 'SHADOW_06 正在解码音频...';
@@ -4518,7 +4534,7 @@ function completeOrder() {
 function openMedical() {    
     if (typeof hangupCall === 'function') hangupCall(); // 先挂断电话再打开医疗
     const modal = document.getElementById('medicalAuthModal');
-    // ... 后面的代码保持不变    if (modal) {
+    if (modal) {
         modal.classList.add('active');
         const input = document.getElementById('medicalPassInput');
         if (input) { input.value = ''; input.focus(); } // 清空并聚焦输入框
