@@ -821,8 +821,8 @@
 .snake-controls .ctrl-row { display: flex; gap: 20px; }
 
 /* 结算弹窗 */
-.snake-modal-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 30px; }
-.snake-modal-overlay.active { display: flex; }
+.snake-modal-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 30px; }
+.snake-modal-overlay.active { display: flex !important; }
 .snake-modal-card { background: var(--bg-card); border: 1px solid var(--gold); border-radius: 12px; padding: 25px; text-align: center; width: 100%; max-width: 320px; box-shadow: 0 0 40px rgba(212, 175, 55, 0.2); animation: blindboxAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .snake-modal-title { font-size: 16px; font-weight: bold; color: #e03e3e; letter-spacing: 2px; margin-bottom: 10px; }
 .snake-modal-desc { font-size: 14px; color: var(--text-primary); margin-bottom: 15px; }
@@ -1686,6 +1686,67 @@
 .call-btn.hangup:hover { background: #c0392b; }
 .call-btn.mute.active { background: #55555e; color: #fff; }
 
+/* ================= 坎布雷亚事件绝密档案样式 ================= */
+.raven-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    margin: 0 auto; width: 100%; max-width: 420px;
+    background: #060608; z-index: 99999;
+    padding: 20px; overflow-y: auto; scrollbar-width: none;
+    font-family: monospace; color: var(--text-primary);
+    
+    /* 👇 核心修复：把 display: none 拆出来，加上双保险隐藏 */
+    display: none; 
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.raven-overlay.active { 
+    /* 👇 核心修复：激活时再显示 */
+    display: flex; 
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+.raven-overlay::-webkit-scrollbar { display: none; }
+.raven-header {
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid #e03e3e; padding-bottom: 12px; margin-bottom: 15px;
+}
+.raven-title { font-size: 15px; font-weight: bold; letter-spacing: 2px; color: #e03e3e; }
+.raven-close { color: var(--text-secondary); font-size: 20px; cursor: pointer; transition: 0.2s; }
+.raven-close:hover { color: #e03e3e; }
+
+.raven-meta { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); }
+.raven-meta-title { font-size: 16px; color: var(--gold); margin-bottom: 5px; letter-spacing: 1px; }
+.raven-meta-info { font-size: 10px; color: var(--text-muted); line-height: 1.6; }
+
+.raven-section { margin-bottom: 15px; }
+.raven-section-title { font-size: 12px; font-weight: bold; color: var(--gold-dim); border-left: 2px solid var(--gold-dark); padding-left: 8px; margin-bottom: 10px; letter-spacing: 1px; }
+
+.raven-official {
+    font-size: 12px; color: var(--text-secondary); line-height: 1.7;
+    background: rgba(255,255,255,0.02); padding: 10px; border-radius: 6px;
+    border-left: 2px solid var(--border-color);
+}
+
+.raven-graves {
+    font-size: 11px; color: #d4af37; line-height: 1.7;
+    background: rgba(212, 175, 55, 0.05); padding: 10px 12px; border-radius: 4px;
+    margin: 6px 0 12px 15px; border-left: 3px solid var(--gold-dim);
+    font-style: italic;
+}
+.raven-graves::before {
+    content: '【P. Graves 批注】'; display: block;
+    color: var(--gold-dim); font-weight: bold; font-style: normal; font-size: 10px; margin-bottom: 4px;
+}
+
+.raven-signature {
+    margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;
+    text-align: right; font-size: 11px; color: var(--text-muted); line-height: 1.8;
+}
+.raven-signature span { display: block; color: #e03e3e; font-weight: bold; margin-top: 5px; letter-spacing: 1px; }
+
 </style>
 <body>
 <div class="phone-mockup">
@@ -2029,9 +2090,18 @@
     </div>
     <div class="dispatch-entry-arrow" style="color: #e03e3e;">→</div>
 </div>
-</div>
+<!-- 坎布雷亚事件入口（第四步新增） -->
+<div class="dispatch-entry" onclick="openRavenArchive()" style="border-color: #e03e3e; background: rgba(224, 62, 62, 0.05); margin-top: 10px;">
+    <div class="dispatch-entry-icon" style="color: #e03e3e;">📁</div>
+    <div class="dispatch-entry-text">
+        <div class="dispatch-entry-title" style="color: #e03e3e;">绝密卷宗 · 坎布雷亚</div>
+        <div class="dispatch-entry-sub">点击查阅格瑞夫斯退役前的内部档案与批注</div>
+    </div>
+    <div class="dispatch-entry-arrow" style="color: #e03e3e;">→</div>
 </div>
 
+</div>
+</div>
 <!-- 控制中心悬浮按钮（仅在登录后显示） -->
 <div class="memo-fab" onclick="openAppCenter()" style="position: absolute; bottom: 90px; right: 20px; z-index: 999;">📱</div>
 <!-- 入职面试主界面 -->
@@ -2141,6 +2211,33 @@
     let errorCount = 0;
     let unlockedA = false, unlockedB = false, unlockedC = false,unlockedD = false;
 
+// 【新增】从浏览器缓存读取档案D
+const savedD = localStorage.getItem('shadow_db_entry_D');
+let hasSavedD = false;
+if (savedD) {
+    try {
+        const parsed = JSON.parse(savedD);
+        dbData['D'] = parsed;
+        hasSavedD = true;
+    } catch(e) { console.warn('读取档案D失败', e); }
+}
+
+// 【新增】如果缓存里有档案D，就动态生成标签页
+window.addEventListener('load', function() {
+    if (hasSavedD) {
+        unlockedD = true;
+        const dbTabs = document.getElementById('dbTabs');
+        if (dbTabs && !document.querySelector(`.db-tab[data-key="D"]`)) {
+            const newTab = document.createElement('div');
+            newTab.className = 'db-tab';
+            newTab.setAttribute('data-key', 'D');
+            newTab.textContent = '档案 D';
+            newTab.onclick = function() { switchDbTab('D', this); };
+            dbTabs.appendChild(newTab);
+        }
+    }
+});
+
     const dbData = {
         'A': {
             password: '2015TANGO',
@@ -2217,10 +2314,11 @@
         document.getElementById('dbDocument').style.display = 'block';
     }
 
-// 🌟 新增：允许外部程序动态添加档案（比如入职试炼生成的档案D）
 window.addDbEntry = function(key, data) {
     dbData[key] = data;
-    
+    if (key === 'D') {
+        localStorage.setItem('shadow_db_entry_D', JSON.stringify(data)); // 新增：把档案D保存到本地
+    }    
     // 🌟 核心新增：动态生成一个新的“档案 D”标签页
     const dbTabs = document.getElementById('dbTabs');
     if (dbTabs && !document.querySelector(`.db-tab[data-key="${key}"]`)) {
@@ -3175,18 +3273,6 @@ window.closeBlackBox = function() {
     </div>
 </div>
 
-<!-- 贪吃蛇结算弹窗 -->
-<div class="snake-modal-overlay" id="snakeModalOverlay">
-    <div class="snake-modal-card">
-        <div class="snake-modal-title">数据连接中断</div>
-        <div class="snake-modal-desc">最高得分：<span id="snakeFinalScore">0</span></div>
-        <div class="snake-modal-comment" id="snakeComment">系统正在评估...</div>
-        <div class="snake-modal-actions">
-            <button class="modal-btn" onclick="resetSnakeGame()">重新潜入</button>
-            <button class="modal-btn cancel" onclick="closeSnakeModal()">退出系统</button>
-        </div>
-    </div>
-</div>
 
 
 
@@ -5814,59 +5900,83 @@ let snakeNextDirection = 'right';
 let snakeFood = { x: 0, y: 0 };
 let snakeScore = 0;
 let snakeHighScore = 0;
-let snakeGameOver = false;
+let snakeGameOver = true; 
 let snakeSpeed = 200;
 let snakeTimer = null;
 let snakeFoodsEaten = 0;
 
+// 打开游戏
 function openSnakeGame() {
     const overlay = document.getElementById('snakeOverlay');
     if (!overlay) return;
     
-    // 核心修复：动态将它移动到手机壳的最外层，避免被隐藏的父级卡住
     const phoneMockup = document.querySelector('.phone-mockup');
     if (phoneMockup && overlay.parentNode !== phoneMockup) {
         phoneMockup.appendChild(overlay);
     }
     
-    // 核心修复：在点击打开时才去获取 canvas，此时页面早已加载完毕
     snakeCanvas = document.getElementById('snakeCanvas');
     if (snakeCanvas) {
         snakeCtx = snakeCanvas.getContext('2d');
     }
     
     overlay.classList.add('active');
-    resetSnakeGame();
+    resetSnakeGame(); // 重置并开始
 }
+
+// 关闭游戏（彻底清理现场）
 function closeSnakeGame() {
     const overlay = document.getElementById('snakeOverlay');
     if (overlay) overlay.classList.remove('active');
-    if (snakeTimer) clearTimeout(snakeTimer);
-    snakeTimer = null; // 清空计时器变量
-    snakeGameOver = true; // 强制标记游戏结束，防止后台循环继续跑
+    
+    if (snakeTimer) {
+        clearTimeout(snakeTimer);
+        snakeTimer = null;
+    }
+    snakeGameOver = true;
+    
+    // 彻底关闭弹窗（移除active类即可，交给CSS控制隐藏）
+    const modal = document.getElementById('snakeModalOverlay');
+    if (modal) modal.classList.remove('active');
 }
+
+// 重置游戏（防止秒死，防止弹窗残留）
 function resetSnakeGame() {
-    if (snakeTimer) clearTimeout(snakeTimer);
+    // 1. 强行清空计时器，彻底断掉之前的循环
+    if (snakeTimer) {
+        clearTimeout(snakeTimer);
+        snakeTimer = null;
+    }
+
+    // 2. 彻底隐藏结算弹窗
+    const modal = document.getElementById('snakeModalOverlay');
+    if (modal) modal.classList.remove('active');
+
+    // 3. 重置数据
     snakeBody = [{ x: 7, y: 7 }, { x: 6, y: 7 }, { x: 5, y: 7 }];
     snakeDirection = 'right';
     snakeNextDirection = 'right';
     snakeScore = 0;
-    snakeGameOver = false;
     snakeSpeed = 200;
     snakeFoodsEaten = 0;
     
-    // 核心修复：把结算弹窗强制隐藏
-    const modal = document.getElementById('snakeModalOverlay');
-    if (modal) modal.classList.remove('active');
-    
-    document.getElementById('snakeScore').textContent = '0';
-    document.getElementById('snakeHighScore').textContent = snakeHighScore;
+    // 4. 刷新UI分数
+    const scoreEl = document.getElementById('snakeScore');
+    if (scoreEl) scoreEl.textContent = '0';
+    const highScoreEl = document.getElementById('snakeHighScore');
+    if (highScoreEl) highScoreEl.textContent = snakeHighScore;
     
     generateSnakeFood();
     drawSnake();
-    
-    snakeTimer = setTimeout(snakeGameLoop, snakeSpeed);
+
+    // 5. 解锁状态，稍微延迟一点再启动，防止闪屏秒死
+    snakeGameOver = false;
+    setTimeout(() => {
+        snakeTimer = setTimeout(snakeGameLoop, snakeSpeed);
+    }, 150);
 }
+
+// 生成食物
 function generateSnakeFood() {
     let newFood;
     let isOccupied = true;
@@ -5880,22 +5990,27 @@ function generateSnakeFood() {
     snakeFood = newFood;
 }
 
+// 游戏主循环
 function snakeGameLoop() {
+    // 关键：如果游戏已结束，立刻停手，绝不往下走一步
     if (snakeGameOver) return;
+    
     snakeDirection = snakeNextDirection;
-
     const head = { ...snakeBody[0] };
+
     if (snakeDirection === 'right') head.x += 1;
     else if (snakeDirection === 'left') head.x -= 1;
     else if (snakeDirection === 'up') head.y -= 1;
     else if (snakeDirection === 'down') head.y += 1;
 
+    // 检查撞墙
     if (head.x < 0 || head.x >= SNAKE_GRID_SIZE || head.y < 0 || head.y >= SNAKE_GRID_SIZE) {
         snakeGameOver = true;
         showSnakeResult();
         return;
     }
 
+    // 检查撞自己
     const willEatFood = (head.x === snakeFood.x && head.y === snakeFood.y);
     const bodyToCheck = willEatFood ? snakeBody : snakeBody.slice(0, -1);
     if (bodyToCheck.some(segment => segment.x === head.x && segment.y === head.y)) {
@@ -5909,7 +6024,9 @@ function snakeGameLoop() {
     if (willEatFood) {
         snakeScore += 10;
         snakeFoodsEaten++;
-        document.getElementById('snakeScore').textContent = snakeScore;
+        const scoreEl = document.getElementById('snakeScore');
+        if (scoreEl) scoreEl.textContent = snakeScore;
+        
         if (snakeFoodsEaten % 3 === 0) {
             snakeSpeed = Math.max(80, snakeSpeed - 15);
         }
@@ -5922,6 +6039,7 @@ function snakeGameLoop() {
     snakeTimer = setTimeout(snakeGameLoop, snakeSpeed);
 }
 
+// 绘制画布
 function drawSnake() {
     if (!snakeCtx) return;
     snakeCtx.fillStyle = '#060608';
@@ -5961,18 +6079,27 @@ function drawSnake() {
     snakeCtx.shadowBlur = 0;
 }
 
+// 改变方向
 function snakeChangeDirection(dir) {
+    if (snakeGameOver) return;
+
     if (dir === 'up' && snakeDirection !== 'down') snakeNextDirection = 'up';
     else if (dir === 'down' && snakeDirection !== 'up') snakeNextDirection = 'down';
     else if (dir === 'left' && snakeDirection !== 'right') snakeNextDirection = 'left';
     else if (dir === 'right' && snakeDirection !== 'left') snakeNextDirection = 'right';
 }
 
+// 结算弹窗显示（只负责弹出来）
 function showSnakeResult() {
-    if (snakeTimer) clearTimeout(snakeTimer);
+    if (snakeTimer) {
+        clearTimeout(snakeTimer);
+        snakeTimer = null;
+    }
+    
     if (snakeScore > snakeHighScore) {
         snakeHighScore = snakeScore;
-        document.getElementById('snakeHighScore').textContent = snakeHighScore;
+        const highScoreEl = document.getElementById('snakeHighScore');
+        if (highScoreEl) highScoreEl.textContent = snakeHighScore;
     }
     
     const finalScoreEl = document.getElementById('snakeFinalScore');
@@ -5996,15 +6123,19 @@ function showSnakeResult() {
         comment = ultraComments[Math.floor(Math.random() * ultraComments.length)];
     }
     commentEl.textContent = comment;
-    modal.classList.add('active');saveGameState();
+    
+    modal.classList.add('active'); // 只用 class 控制，绝对不要去碰 style.display
+    saveGameState();
 }
 
+// 关闭结算弹窗（点“退出系统”时触发）
 function closeSnakeModal() {
     const modal = document.getElementById('snakeModalOverlay');
     if (modal) modal.classList.remove('active');
     closeSnakeGame();
 }
 
+// 键盘控制
 document.addEventListener('keydown', function(e) {
     const overlay = document.getElementById('snakeOverlay');
     if (!overlay || !overlay.classList.contains('active')) return;
@@ -6020,7 +6151,6 @@ document.addEventListener('keydown', function(e) {
     }
     if (handled) e.preventDefault();
 });
-
 /* ================= 23. 全球特工派遣逻辑 ================= */
 // 独立资金（初始资金 50 万，独立于总资产）
 let dispatchFunds = 500000;
@@ -7938,6 +8068,147 @@ window.addEventListener('load', function() {
         <button class="call-btn text" onclick="switchToTextChat()">💬</button>
     </div>
 </div>
+<!-- 贪吃蛇结算弹窗 -->
+<div class="snake-modal-overlay" id="snakeModalOverlay">
+    <div class="snake-modal-card">
+        <div class="snake-modal-title">数据连接中断</div>
+        <div class="snake-modal-desc">最高得分：<span id="snakeFinalScore">0</span></div>
+        <div class="snake-modal-comment" id="snakeComment">系统正在评估...</div>
+        <div class="snake-modal-actions">
+            <button class="modal-btn" onclick="resetSnakeGame()">重新潜入</button>
+            <button class="modal-btn cancel" onclick="closeSnakeModal()">退出系统</button>
+        </div>
+    </div>
+</div>
 
+<!-- 坎布雷亚事件绝密档案弹窗 -->
+<div class="raven-overlay" id="ravenOverlay">
+    <div class="raven-header">
+        <div class="raven-title">📁 绝密卷宗 · 坎布雷亚事件</div>
+        <div class="raven-close" onclick="closeRavenArchive()">✕</div>
+    </div>
+
+    <div class="raven-meta">
+        <div class="raven-meta-title">美国海军陆战队 机密档案</div>
+        <div class="raven-meta-info">
+            卷宗编号：USMC-ARCH-15-1104<br>
+            事件名称：坎布雷亚事件 (Cambrea Incident)<br>
+            归档单位：海军陆战队第一侦察营 / 联合指挥部档案室
+        </div>
+    </div>
+
+    <div class="raven-section">
+        <div class="raven-section-title">一、 行动背景与任务目标</div>
+        <div class="raven-official">
+            <strong>任务指令：</strong>潜入东欧交战区，获取包含生化武器配方的高危“机密硬盘”。<br>
+            <strong>参战编制：</strong>突击组（Helios 太阳神小队，核心16人，指挥官：菲利普·格瑞夫斯上尉）；外围支援组 80人。<br>
+            <strong>情报评估：</strong>目标区域仅有约50名非正规武装驻守。战后调查显示敌方实际兵力逾200人，配备重火力。
+        </div>
+        <div class="raven-graves">
+            地图上标注的50名杂牌武装，实际是200名拥有重火力的雇佣兵。情报误差过大，这是事件爆发的起点。
+        </div>
+    </div>
+
+    <div class="raven-section">
+        <div class="raven-section-title">二、 战斗通讯与战术记录（摘要）</div>
+        
+        <div class="raven-official" style="margin-bottom: 5px;">
+            <strong>【11月1日 05:30 · 第一次呼叫】</strong><br>
+            遭遇伏击，瞬间发生伤亡。Graves呼叫请求火力压制与撤离。<br>
+            指挥部回复：“支援正在路上，保持防线等待接应。”<br>
+            <em>(调查附注：此阶段指挥部已关闭该小队所有通讯备份频段，并撤回了原定接应直升机的飞行许可。)</em>
+        </div>
+        <div class="raven-graves">
+            呼叫时已阵亡2人，重伤3人。后备频段被关闭，路线被取消。指挥部的“支援”承诺与事实不符，客观上构成了信息阻断。
+        </div>
+
+        <div class="raven-official" style="margin-bottom: 5px;">
+            <strong>【11月2日 14:00 · 第二次呼叫】</strong><br>
+            被围困超32小时，伤员失血失温。Graves请求接应坐标。<br>
+            指挥部回复：“最近接应点在某海港废弃码头。沿岸备有接应小艇，自行前往。”<br>
+            <em>(现场调查记录：小队突围至码头后，发现该“接应小艇”实际为一艘核载2人的微型橡皮艇。无法满足小队撤离需求。)</em>
+        </div>
+        <div class="raven-graves">
+            我们突围至码头，发现所谓“接应小艇”仅核载2人。小队16人，减去阵亡，仍有10人。这艘船的安排，在战术上没有提供撤离可行性，只分化了队伍的生存名额。
+        </div>
+
+        <div class="raven-official">
+            <strong>【11月3日 09:00 · 第三次呼叫】</strong><br>
+            伤亡率超30%。Graves请求立即支援。<br>
+            指挥部回复：“立刻派出支援另一支小队的成本太高，风险太大。你们自行寻找安全点等待救援。指挥中心结束。”<br>
+            <em>(调查附注：此后共计十余次呼叫，均未获得回应。)</em>
+        </div>
+        <div class="raven-graves">
+            无线电中记录的原话是“成本太高，风险太大”。指挥部的计算逻辑合理：对高层而言，我们不再是有生力量，而是需要被清理的沉没成本。
+        </div>
+    </div>
+
+    <div class="raven-section">
+        <div class="raven-section-title">三、 伤亡统计与突围结果</div>
+        <div class="raven-official" style="margin-bottom: 5px;">
+            <strong>战斗环境：</strong>东欧严寒冰原，最低气温零下15度，战斗持续72小时。<br>
+            <strong>最终伤亡：</strong>核心16人，阵亡4人，重伤7人（含终身残疾），指挥官格瑞夫斯右臂中弹负伤。<br>
+            <strong>突围记录：</strong>小队在无补给、无火力支援的条件下，依靠缴获敌军弹药和近身肉搏，成功撕开防线，带回10名幸存者。
+        </div>
+        <div class="raven-graves">
+            4人阵亡，7人重伤。如果用官方提供的2人小艇撤退，这个数字还会更难看。我们靠自己杀出来了，但依然无法改变编制严重减员的事实。
+        </div>
+    </div>
+
+    <div class="raven-section">
+        <div class="raven-section-title">四、 联合调查委员会 最终裁定</div>
+        <div class="raven-official" style="margin-bottom: 5px;">
+            <strong>1. 行动负责人责任认定：</strong>行动负责人维纳斯（Venus）少将，未能有效协调情报与后勤保障部门。经裁定，给予“内部处分”，不影响其后续职务晋升。<br><br>
+            <strong>2. Helios小队定性：</strong>在极端环境下表现突出，但存在“违规偏离原定任务”、“未按指令原地待命”、“擅自强行突围”等行为。根据《军事行动纪律条例》，<strong>功过相抵，不予表彰，不予追究。</strong><br><br>
+            <strong>委员会结案陈词：</strong>“这是一次因战场信息不对称导致的悲剧性误会。五角大楼对此深表遗憾。希望格瑞夫斯上尉和他的小队能够理解，战术上的牺牲是为了战略上的大局。”
+        </div>
+        <div class="raven-graves">
+            维纳斯少将保留职务。小队阵亡4人，重伤7人，无功无过。错误指令的签发者保留了职务，在正确方向上拼死突围的人被抹去了功绩。整件事缺乏基本的逻辑闭环。<br><br>
+            这份裁定下发当天，我向军部提交了退伍申请。我的小队中，有12人自愿退役随我离开。我将这次行动的全部通讯录音、作战记录和裁定书副本提取并留存。它将成为我建立新公司的底线标尺——既然规则无法保护前线的人，那么我们就只相信契约、火力和自己人。
+        </div>
+    </div>
+
+    <div class="raven-signature" style="text-align: left;">
+    <!-- 官方留存的内容 -->
+    <div style="font-weight: bold; color: var(--text-primary); margin-bottom: 8px; font-size: 12px;">【档案结尾 · 官方留存】</div>
+    <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 10px;">
+        委员会备注：该员已于11月23日办理强制退役手续。携带核心技术骨干12人离开。<br>
+        警告：该员对军方常规调度产生深度不信任。建议情报部门将其列入观察名单。
+    </div>
+
+    <!-- 格瑞夫斯的嗤之以鼻 -->
+    <div class="raven-graves" style="margin-left: 0; margin-top: 15px;">
+        还是在遗憾我没死在大雪里？可惜了那座你们给我留的“丰碑”了。
+    </div>
+
+    <!-- 落款 -->
+    <div style="text-align: right; margin-top: 15px; line-height: 1.8;">
+        归档员：M. Reynolds 上士<br>
+        审核官：J. P. Harrison 少将<br>
+        归档日期：2015年11月31日<br>
+        <span style="color: #e03e3e; font-weight: bold;">档案封存：视同结案</span>
+    </div>
+</div>
+<script>
+// ================= 坎布雷亚事件档案逻辑 =================
+(function() {
+    // 独立作用域，避免与现有全局变量冲突
+    window.openRavenArchive = function() {
+        const overlay = document.getElementById('ravenOverlay');
+        if (overlay) {
+            overlay.classList.add('active');
+            // 可选：打开时顺便强制关闭其他冲突弹窗
+            if (typeof closeAppCenter === 'function') closeAppCenter(); 
+            if (typeof closeBlackBox === 'function') closeBlackBox();
+            if (typeof closeDroneView === 'function') closeDroneView();
+        }
+    };
+
+    window.closeRavenArchive = function() {
+        const overlay = document.getElementById('ravenOverlay');
+        if (overlay) overlay.classList.remove('active');
+    };
+})();
+</script>
 </body>
 </html>
