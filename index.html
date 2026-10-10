@@ -1589,25 +1589,32 @@
 
 /* ================= 战术加密电话样式 ================= */
 .call-overlay {
-    position: fixed; /* 核心修改：固定定位，相对于视口，不再受父级影响 */
-    top: 0; 
-    left: 0; 
-    right: 0; 
-    bottom: 0;
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0;
     margin: 0 auto; 
-    width: 100%; 
-    max-width: 420px;
+    width: 100%; max-width: 420px;
     background-color: #060608;
-    /* ... 其他样式不变 ... */
     z-index: 99999;
-    overflow: hidden; /* 防止内部内容把外面撑开 */
+    overflow: hidden;
+    
+    /* 👇 核心修复：补上这两行，让它默认隐藏 */
+    display: none; 
+    opacity: 0; 
+    
+    /* 如果你想要滑入动画，可以保留 transition */
+    transition: opacity 0.3s ease-in-out;
 }
-/* 激活状态：完全显示、不可见、归位 */
+
+/* 激活状态（打开通话时） */
 .call-overlay.active { 
+    /* 👇 核心修复：打开时用 flex 铺满，并显示出来 */
+    display: flex; 
+    flex-direction: column;
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0);
+    /* transform: translateY(0); 👈 如果用 display，这行可以去掉，否则会破坏 flex */
 }
+
 .call-header {
     display: flex; justify-content: space-between; align-items: center;
     color: var(--gold-dim); font-size: 12px; font-family: monospace;
